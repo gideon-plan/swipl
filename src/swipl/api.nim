@@ -5,6 +5,7 @@ import std/strformat
 import std/strutils
 
 import basis/code/throw
+import basis/code/maybe
 
 import swipl/ffi
 import swipl/glue
@@ -293,3 +294,15 @@ proc initialize*(max = MAX, do_drop = false): SWIPL =
       nl
     )
   result.foreign: result.init = result.assertz(eval_src) and result.assertz(evaln)
+
+# -----------------------------------------------------------------------
+# Maybe overloads (non-raising)
+# -----------------------------------------------------------------------
+
+proc try_run*(engine: SWIPL, term: PrologTerm): Maybe[Solution, ref QueryError] =
+  try: Maybe[Solution, ref QueryError].yes(engine.run(term))
+  except QueryError as e: Maybe[Solution, ref QueryError].no(e)
+
+proc try_call*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): Maybe[bool, ref QueryError] =
+  try: Maybe[bool, ref QueryError].yes(engine.call(term, module_name))
+  except QueryError as e: Maybe[bool, ref QueryError].no(e)
