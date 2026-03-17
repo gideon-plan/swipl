@@ -15,6 +15,21 @@ import swipl/dsl
 standard_pragmas(effects=false, rise=false)
 
 # -----------------------------------------------------------------------
+# Distinct string types
+# -----------------------------------------------------------------------
+
+type
+  PrologTerm* = distinct string
+  ModuleName* = distinct string
+
+func `$`*(v: PrologTerm): string {.borrow.}
+func `$`*(v: ModuleName): string {.borrow.}
+func `==`*(a, b: PrologTerm): bool {.borrow.}
+func `==`*(a, b: ModuleName): bool {.borrow.}
+func len*(v: PrologTerm): int {.borrow.}
+func len*(v: ModuleName): int {.borrow.}
+
+# -----------------------------------------------------------------------
 # Types
 # -----------------------------------------------------------------------
 
@@ -78,11 +93,11 @@ proc drop*(engine: SWIPL): SWIPL {.ok.} =
   engine.flags = PL_DROP.cint
   engine
 
-proc enable_debug*(engine: SWIPL, topic: string): bool {.ok.} =
-  PL_prolog_debug(topic.cstring)
+proc enable_debug*(engine: SWIPL, topic: PrologTerm): bool {.ok.} =
+  PL_prolog_debug(($topic).cstring)
 
-proc disable_debug*(engine: SWIPL, topic: string): bool {.ok.} =
-  PL_prolog_nodebug(topic.cstring)
+proc disable_debug*(engine: SWIPL, topic: PrologTerm): bool {.ok.} =
+  PL_prolog_nodebug(($topic).cstring)
 
 # -----------------------------------------------------------------------
 # Assert
@@ -91,8 +106,8 @@ proc disable_debug*(engine: SWIPL, topic: string): bool {.ok.} =
 proc assertz*(engine: SWIPL, tr: term_t, module: module_t = nil): bool {.ok.} =
   PL_assert(tr, module, PL_ASSERTZ.cint)
 
-proc assertz*(engine: SWIPL, term: string, module_name = ""): bool =
-  engine.assertz(term.term, module_name.module)
+proc assertz*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): bool =
+  engine.assertz(($term).term, ($module_name).module)
 
 proc assertz*(engine: SWIPL, source: Source): bool =
   engine.assertz(source.term, source.module)
@@ -100,8 +115,8 @@ proc assertz*(engine: SWIPL, source: Source): bool =
 proc asserta*(engine: SWIPL, tr: term_t, module: module_t = nil): bool {.ok.} =
   PL_assert(tr, module, PL_ASSERTA.cint)
 
-proc asserta*(engine: SWIPL, term: string, module_name = ""): bool =
-  engine.asserta(term.term, module_name.module)
+proc asserta*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): bool =
+  engine.asserta(($term).term, ($module_name).module)
 
 proc asserta*(engine: SWIPL, source: Source): bool =
   engine.asserta(source.term, source.module)
@@ -111,13 +126,13 @@ proc asserta*(engine: SWIPL, source: Source): bool =
 # -----------------------------------------------------------------------
 
 proc library*(engine: SWIPL, lib: string): bool =
-  engine.assertz(&"[library({lib})]")
+  engine.assertz(PrologTerm("[library(" & lib & ")]"))
 
 proc consult*(engine: SWIPL, file: string): bool =
-  engine.assertz(&"consult({file})")
+  engine.assertz(PrologTerm("consult(" & file & ")"))
 
 proc ensure*(engine: SWIPL, file: string): bool =
-  engine.assertz(&"ensure_loaded({file})")
+  engine.assertz(PrologTerm("ensure_loaded(" & file & ")"))
 
 # -----------------------------------------------------------------------
 # Call
@@ -126,8 +141,8 @@ proc ensure*(engine: SWIPL, file: string): bool =
 template call*(engine: SWIPL, tr: term_t, module: module_t = nil): bool =
   PL_call(tr, module)
 
-proc call*(engine: SWIPL, term: string, module_name = ""): bool =
-  engine.call(term.term, module_name.module)
+proc call*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): bool =
+  engine.call(($term).term, ($module_name).module)
 
 proc call*(engine: SWIPL, source: Source): bool =
   engine.call(source.term, source.module)
@@ -206,32 +221,32 @@ proc eval*(term: string): RunResult =
     raise newException(QueryError, RUN_ERROR)
   (arguments, term_t(uint(arguments) + uint(ONE)))
 
-proc run*(engine: SWIPL, term: string): Solution =
-  let q = term.eval()
+proc run*(engine: SWIPL, term: PrologTerm): Solution =
+  let q = ($term).eval()
   if engine.solve(run_pred(), q.arguments, nil):
     return PL_copy_term_ref(q.sol).solution.solve()
   nil
 
 proc run*(engine: SWIPL, source: Source): Solution =
-  engine.run($source)
+  engine.run(PrologTerm($source))
 
-iterator runs*(engine: SWIPL, term: string): Solution =
-  let q = eval(term)
+iterator runs*(engine: SWIPL, term: PrologTerm): Solution =
+  let q = eval($term)
   for t in engine.query(run_pred(), q.arguments, nil):
     yield q.sol.solution.solve()
 
 iterator runs*(engine: SWIPL, source: Source): Solution =
-  for t in engine.runs($source): yield t
+  for t in engine.runs(PrologTerm($source)): yield t
 
 # -----------------------------------------------------------------------
 # FFI registration
 # -----------------------------------------------------------------------
 
-proc register*(name: string, arity: int, funk: pl_function_t, flags: FFIFlag = ffiNONDET, module_name = ""): bool {.ok.} =
+proc register*(name: PrologTerm, arity: int, funk: pl_function_t, flags: FFIFlag = ffiNONDET, module_name = ModuleName("")): bool {.ok.} =
   if module_name.len == 0:
-    PL_register_foreign(name.cstring, arity.cint, funk, flags.cint)
+    PL_register_foreign(($name).cstring, arity.cint, funk, flags.cint)
   else:
-    PL_register_foreign_in_module(module_name.cstring, name.cstring, arity.cint, funk, flags.cint)
+    PL_register_foreign_in_module(($module_name).cstring, ($name).cstring, arity.cint, funk, flags.cint)
 
 # -----------------------------------------------------------------------
 # Initialize
