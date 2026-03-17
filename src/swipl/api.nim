@@ -1,8 +1,6 @@
 ## High-level SWI-Prolog API.
 
-import std/exitprocs
-import std/strformat
-import std/strutils
+import std/[exitprocs, strformat, strutils]
 
 import basis/code/throw
 import basis/code/maybe

@@ -1,11 +1,6 @@
 ## SWI-Prolog term builder DSL.
 
-import std/macros
-import std/sets
-import std/strformat
-import std/strutils
-import std/sugar
-import std/tables
+import std/[macros, sets, strformat, strutils, sugar, tables]
 
 import basis/code/throw
 

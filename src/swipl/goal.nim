@@ -1,7 +1,6 @@
 ## SWI-Prolog goal execution.
 
-import std/algorithm
-import std/sugar
+import std/[algorithm, sugar]
 
 import basis/code/throw
 
