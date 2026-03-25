@@ -3,7 +3,7 @@
 import std/[exitprocs, strformat, strutils]
 
 import basis/code/throw
-import basis/code/maybe
+import basis/code/choice
 
 import swipl/ffi
 import swipl/glue
@@ -297,10 +297,10 @@ proc initialize*(max = MAX, do_drop = false): SWIPL =
 # Maybe overloads (non-raising)
 # -----------------------------------------------------------------------
 
-proc try_run*(engine: SWIPL, term: PrologTerm): Maybe[Solution, ref QueryError] =
-  try: Maybe[Solution, ref QueryError].yes(engine.run(term))
-  except QueryError as e: Maybe[Solution, ref QueryError].no(e)
+proc try_run*(engine: SWIPL, term: PrologTerm): Choice[Solution] =
+  try: good(engine.run(term))
+  except QueryError as e: bad[Solution]("swipl", e.msg)
 
-proc try_call*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): Maybe[bool, ref QueryError] =
-  try: Maybe[bool, ref QueryError].yes(engine.call(term, module_name))
-  except QueryError as e: Maybe[bool, ref QueryError].no(e)
+proc try_call*(engine: SWIPL, term: PrologTerm, module_name = ModuleName("")): Choice[bool] =
+  try: good(engine.call(term, module_name))
+  except QueryError as e: bad[bool]("swipl", e.msg)

@@ -5,7 +5,7 @@ import std/unittest
 import swipl/api
 import swipl/dsl
 import swipl/ffi
-import basis/code/maybe
+import basis/code/choice
 
 # SWI-Prolog can only be initialized once per process.
 var engine: SWIPL
