@@ -3,6 +3,8 @@
 ## Source: SWI-Prolog.h from SWI-Prolog 10.0.2.
 ## Ported from gideon archive (8.x target).
 
+import segfaults
+
 {.push cdecl.}
 {.push header: "<SWI-Prolog.h>".}
 

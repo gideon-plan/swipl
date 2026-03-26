@@ -139,26 +139,26 @@ suite "Maybe overloads":
   test "try_call success":
     engine.scope:
       let result = engine.try_call(PrologTerm("true"))
-      check result.good
+      check result.is_good
       check result.val == true
 
   test "try_call failure":
     engine.scope:
       let result = engine.try_call(PrologTerm("fail"))
-      check result.good
+      check result.is_good
       check result.val == false
 
   test "try_run success":
     engine.scope:
       let result = engine.try_run(PrologTerm("X = hello"))
-      check result.good
+      check result.is_good
       check result.val != nil
 
   test "try_run failure":
     engine.scope:
       let result = engine.try_run(PrologTerm("fail"))
       # fail doesn't raise, just returns nil
-      check result.good
+      check result.is_good
       check result.val == nil
 
 suite "engine flags":
