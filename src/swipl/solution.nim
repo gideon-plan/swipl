@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog solution iteration and variable binding extraction.
 
 import std/tables

@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog term reference helpers and type conversion.
 
 import basis/code/throw

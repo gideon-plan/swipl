@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog goal execution.
 
 import std/[algorithm, sugar]

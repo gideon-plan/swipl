@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## Goal, solution, and API integration tests.
 
 import std/unittest

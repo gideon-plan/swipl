@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog C API bindings.
 ##
 ## Source: SWI-Prolog.h from SWI-Prolog 10.0.2.

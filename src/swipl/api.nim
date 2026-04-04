@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## High-level SWI-Prolog API.
 
 import std/[exitprocs, strformat, strutils]

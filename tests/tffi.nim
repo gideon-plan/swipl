@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## FFI smoke tests.
 
 import std/unittest

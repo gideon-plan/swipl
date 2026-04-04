@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog binding for Nim.
 
 import swipl/ffi

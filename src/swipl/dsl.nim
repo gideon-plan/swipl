@@ -1,3 +1,4 @@
+{.experimental: "strictFuncs".}
 ## SWI-Prolog term builder DSL.
 
 import std/[macros, sets, strformat, strutils, sugar, tables]
